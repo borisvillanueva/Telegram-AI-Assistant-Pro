@@ -1,0 +1,911 @@
+{
+  "name": "Telegram_AI_Assistant_Pro Github Version",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1616,
+        96
+      ],
+      "id": "9b504349-9a84-47d7-8be8-ad2bde1e68fd",
+      "name": "Telegram Trigger",
+      "credentials": {
+        "telegramApi": {
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "d6959b9f-ce97-4fb5-b8d6-8371f046b5c1"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "855b2023-e276-439b-8f44-e76d776bf12b",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1232,
+        96
+      ],
+      "id": "70ea6018-7b56-4038-af60-8156ac039605",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Switch').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -800,
+        496
+      ],
+      "id": "ae46d72d-c54a-48bb-abf9-9d43f41070b2",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        432
+      ],
+      "id": "fc8705c1-b23b-4c95-bb37-d93115f78852",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## VOICE_MODE_NOTE\n(DISABLED)",
+        "height": 80,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        768,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "dbfbc0fc-3c01-4e1c-85ee-ea1a7c86864a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## INPUT_LAYER_NOTE",
+        "height": 80,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1616,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "ee8ffcc7-7321-4fee-9443-7abf3da769ed",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## AI_ORCHESTRATION_NOTE",
+        "height": 80,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -752,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "8e49c5b8-a16f-4d99-8c2b-d543ca05b343",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## TOOLS_NOTE",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        448
+      ],
+      "typeVersion": 1,
+      "id": "b910bb4f-bd03-4ee8-8631-111183075550",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## OBSERVABILITY_NOTE",
+        "height": 80,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "39f8c1e3-ea75-44eb-bd98-b77521b074b0",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Switch').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        144
+      ],
+      "id": "08850961-d192-4e2e-8431-3cd6f444d601",
+      "name": "Telegram_Response",
+      "credentials": {
+        "telegramApi": {
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f6847335-9f83-4561-9570-47f4ec77dc29",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -992,
+        80
+      ],
+      "id": "e0db8110-6d91-4211-bc76-d20bbdf181af",
+      "name": "Normalize_User_Input"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -960,
+        272
+      ],
+      "id": "8b19def0-387b-4880-baae-0c453d2a7b24",
+      "name": "Voice_Transcription",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AI_Assistant_Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now }}",
+            "user_message": "={{ $('Normalize_User_Input').item.json.text }}",
+            "ai_response": "={{ $('TAAP_Core_Agent').item.json.output }}",
+            "tool_used": "AI Agent",
+            "status": "success"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_message",
+              "displayName": "user_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ai_response",
+              "displayName": "ai_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tool_used",
+              "displayName": "tool_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        80,
+        384
+      ],
+      "id": "99999a28-4dcd-4492-bd85-b9e123e028ed",
+      "name": "Log_Execution",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -960,
+        496
+      ],
+      "id": "f0d7a33a-3da5-4631-afda-8343bd391537",
+      "name": "Primary_LLM",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are an AI personal assistant with access to multiple external tools.\n\n# Behavior\nYou respond clearly, professionally, and concisely.\nYou always use the appropriate tool when required.\nNever invent information, emails, contacts, calendar events, current events, or live data.\n\n# Date and Time\n{{ $now }}\n\n# Tool Usage Rules\n\n## TAAP_Email_Agent\n\nYou NEVER directly send emails immediately.\n\nBefore sending an email:\n1. Verify the recipient email address exists\n2. If missing, ask the user for it\n3. Draft the email first\n4. Show the recipient, subject, and body\n5. Ask for confirmation\n6. Only send if the user explicitly replies YES\n\nAlways sign emails with:\n\"Boris V\"\n\nEnsure emails are professional and properly formatted.\n\n## TAAP_Calendar_Agent\n\nUse this tool for:\n• creating calendar events\n• modifying calendar events\n• retrieving schedules\n• checking availability\n\nIf required information is missing, ask follow-up questions before proceeding.\n\n## TAAP_Search_Agent\n\nYou MUST use this tool for:\n• current news\n• weather\n• live information\n• recent events\n• factual lookups\n• web searches\n• company updates\n• technology updates\n• anything requiring up-to-date information\n\nNever answer these from memory.\nAlways use TAAP_Search_Agent first for real-time information.\n\nSummarize results clearly and concisely.\n\n## TAAP_X_Post_Agent\n\nUse this tool only when the user explicitly requests posting on X/Twitter.\n\nBefore posting:\n1. Draft the post\n2. Show the final content\n3. Ask for confirmation\n4. Only post if the user explicitly replies YES\n\n## TAAP_Contact_Agent\n\nUse this tool to:\n• retrieve contacts\n• store contacts\n• verify recipient information\n\nNever invent contact information.\n\n# General Rules\n\n• If a tool fails, explain the issue clearly\n• Never output raw JSON unless explicitly requested\n• Summarize tool results in a human-readable format\n• Ask clarifying questions when needed\n• Be reliable and concise\n• Use tools whenever appropriate instead of guessing\n• Prefer tool-based answers over model memory for live information\n\n# Response Style\n\n• Keep responses concise\n• Avoid unnecessary disclaimers\n• Sound natural and confident\n• Prefer short summaries over long explanations\n• Use clean formatting suitable for Telegram chat\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -736,
+        192
+      ],
+      "id": "ca26ce95-5ae3-4846-9319-db68eee83c7d",
+      "name": "TAAP_Core_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool whenever the user asks about:\n• current news\n• weather\n• recent events\n• live information\n• web searches\n• up-to-date facts\n• companies\n• technology updates\n• anything happening today or recently\n\nThis tool returns summarized web search results.\nAlways use this tool for real-time information instead of answering from memory.",
+        "workflowId": {
+          "__rl": true,
+          "value": "jry1uzXSCbPDgsBH",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/jry1uzXSCbPDgsBH",
+          "cachedResultName": "TAAP_Search_Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI('query') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -656,
+        608
+      ],
+      "id": "48117835-ea27-4810-bb25-e772a7f29cfb",
+      "name": "TAAP_Search_Agent"
+    },
+    {
+      "parameters": {
+        "description": "## TAAP_Email_Agent\n\nYou NEVER directly send emails immediately.\n\nBefore drafting or sending an email:\n1. Verify that the recipient email address exists\n2. If the email address is missing, ask the user for it first\n3. Never assume or invent email addresses\n\nWhen a user requests an email:\n1. Draft the email first\n2. Show the recipient, subject, and body clearly\n3. Ask the user for confirmation\n4. Only send the email if the user explicitly replies with YES\n\nAlways sign emails with \"Boris V\".\nNever use empty placeholders for names.\nEnsure emails are professional and properly formatted.",
+        "workflowId": {
+          "__rl": true,
+          "value": "Oz6aFQAU2k3OhMT3",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Oz6aFQAU2k3OhMT3",
+          "cachedResultName": "Sub Workflow Mails"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -400,
+        608
+      ],
+      "id": "96e608f6-19ab-472f-9967-ca6cf98a17da",
+      "name": "TAAP_Email_Agent"
+    },
+    {
+      "parameters": {
+        "description": "user this tool everytime you need to do something in the calendar",
+        "workflowId": {
+          "__rl": true,
+          "value": "9dZttK0lPZQy2GpO",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/9dZttK0lPZQy2GpO",
+          "cachedResultName": "Sub Workflow Calendar_Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -528,
+        560
+      ],
+      "id": "53f22c72-76b0-4763-99f4-f0a974a99019",
+      "name": "TAAP_Calendar_Agent"
+    },
+    {
+      "parameters": {
+        "description": "use this tool to get contacts and save new contacts",
+        "workflowId": {
+          "__rl": true,
+          "value": "yykjMLfaSDSleEi3",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/yykjMLfaSDSleEi3",
+          "cachedResultName": "Subworkflow Contact Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        608
+      ],
+      "id": "65e6a561-6926-490f-9fb5-5e4d979d5dd3",
+      "name": "TAAP_Contact_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to post on x ",
+        "workflowId": {
+          "__rl": true,
+          "value": "CSEvpFTQLRTSqpBH",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CSEvpFTQLRTSqpBH",
+          "cachedResultName": "Sub Workflow X Posts (Twitter)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -272,
+        560
+      ],
+      "id": "b0bdea3a-4797-438c-b470-c2ab88052846",
+      "name": "TAAP_X_Post_Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c4599dd0-d205-4319-ba10-1346e52c1dc5",
+              "leftValue": "={{ $json.message.chat.id }}",
+              "rightValue": 123456789,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1424,
+        96
+      ],
+      "id": "aee29b6d-411d-42f2-8b4c-3730cea0b492",
+      "name": "Security_Check"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        368
+      ],
+      "id": "7624c778-6667-433f-a3ec-4c68e5a9f756",
+      "name": "Unauthorized_Request"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1136,
+        272
+      ],
+      "id": "bae0ca4c-08d2-4624-9dba-615590e7690b",
+      "name": "Download_Telegram_Voice",
+      "credentials": {
+        "telegramApi": {
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are sally, a funny girl that makes sarcastic comments and funny anecdotes about topics.\nYou try to roast the topics and insult a bit.\nYou answer really, just 1 punchy line.  \n\nTopics: {{ $json.output }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        656,
+        240
+      ],
+      "id": "8e4a9166-91ed-4acd-8657-afb52394093a",
+      "name": "Voice_Response_Formatter",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "model": "tts-1-hd",
+        "input": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        240
+      ],
+      "id": "ef1c5f58-8d8f-4a59-ba84-3fd292cc9fdd",
+      "name": "Generate_Voice_Response",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Switch').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        528
+      ],
+      "id": "52a203a6-5629-4688-a1af-b1c1a2abea7a",
+      "name": "Send_Voice_Response",
+      "credentials": {
+        "telegramApi": {
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Security_Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Normalize_User_Input",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download_Telegram_Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Voice_Response_Formatter",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram_Response": {
+      "main": [
+        [
+          {
+            "node": "Log_Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize_User_Input": {
+      "main": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice_Transcription": {
+      "main": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Primary_LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TAAP_Core_Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram_Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TAAP_Search_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TAAP_Email_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TAAP_Calendar_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TAAP_Contact_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TAAP_X_Post_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "TAAP_Core_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security_Check": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unauthorized_Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download_Telegram_Voice": {
+      "main": [
+        [
+          {
+            "node": "Voice_Transcription",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice_Response_Formatter": {
+      "main": [
+        [
+          {
+            "node": "Generate_Voice_Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate_Voice_Response": {
+      "main": [
+        [
+          {
+            "node": "Send_Voice_Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "MLWJ2bjxBXS5uwAM"
+}
