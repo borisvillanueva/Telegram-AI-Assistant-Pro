@@ -196,9 +196,7 @@ Telegram-AI-Assistant-Pro/
 │   ├── 3-Telegram AI Conversation — Safe Email Handling.png
 │   ├── 4-Google Sheets Logging - Observability.png
 │   └── 5-Search Subworkflow Architecture.png
-│
-└── assets/
-    └── optional-future-assets
+
 ```
 
 ---
